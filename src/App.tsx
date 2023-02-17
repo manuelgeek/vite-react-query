@@ -1,34 +1,39 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
 import './App.css'
+import { useQuery } from 'react-query';
+
+interface Post {
+  userId: number
+  id: number
+  title: string
+  body: string
+}
+
+async function fetchPosts(): Promise<Post[]> {
+  const data = await fetch(
+    "https://jsonplaceholder.typicode.com/posts"
+  )
+  return data.json();
+}
 
 function App() {
-  const [count, setCount] = useState(0)
+  const { data, error, isError, isLoading } = useQuery("posts", fetchPosts);
+  // first argument is a string to cache and track the query result
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+  if (isError) {
+    return <div>Error! {(error as any).message}</div>;
+  }
+
 
   return (
     <div className="App">
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src="/vite.svg" className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://reactjs.org" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+      <h1>Posts</h1>
+      {data?.map((post) => {
+        return <li key={post.id}>{post.title}</li>;
+      })}
     </div>
-  )
+  );
 }
 
 export default App
