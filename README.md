@@ -1,5 +1,5 @@
 # Vite React Query
-> Sample react app to test react query
+> Simple react app to test react query
 
 ### Set up
 `yarn`
